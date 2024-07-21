@@ -101,7 +101,7 @@
                                         </div>
                                         <div class="col-12">
                                             <p class="small mb-0">Belum memiliki akun? <a
-                                                    href="pages-register.html">Buat akun</a></p>
+                                                    href="{{ route('register') }}">Buat akun</a></p>
                                         </div>
                                     </form>
 

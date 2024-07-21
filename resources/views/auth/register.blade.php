@@ -59,14 +59,14 @@
                                     </div>
 
                                     <form method="POST" action="{{ route('register') }}"
-                                        class="row g-3 needs-validation">
+                                        class="row g-3 needs-validation" enctype="multipart/form-data">
                                         @csrf
                                         <div class="col-12">
                                             <label for="yourName" class="form-label">Nama Anda</label>
-                                            <input type="text" name="name"
-                                                class="form-control @error('name') is-invalid @enderror"
-                                                value="{{ old('name') }}">
-                                            @error('name')
+                                            <input type="text" name="nama"
+                                                class="form-control @error('nama') is-invalid @enderror"
+                                                value="{{ old('nama') }}">
+                                            @error('nama')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
@@ -87,10 +87,10 @@
 
                                         <div class="col-12">
                                             <label for="yourPhoneNumber" class="form-label">Nomor Telepon</label>
-                                            <input type="text" name="notelp"
-                                                class="form-control @error('notelp') is-invalid @enderror"
-                                                id="yourPhoneNumber" value="{{ old('notelp') }}">
-                                            @error('notelp')
+                                            <input type="text" name="nomor_telepon"
+                                                class="form-control @error('nomor_telepon') is-invalid @enderror"
+                                                id="yourPhoneNumber" value="{{ old('nomor_telepon') }}">
+                                            @error('nomor_telepon')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
                                                 </span>
@@ -110,6 +110,18 @@
                                         </div>
 
                                         <div class="col-12">
+                                            <label for="yourScanKTP" class="form-label">Scan KTP</label>
+                                            <input type="file" name="scan_ktp"
+                                                class="form-control @error('scan_ktp') is-invalid @enderror"
+                                                id="yourScanKTP">
+                                            @error('scan_ktp')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-12">
                                             <label for="yourPassword" class="form-label">Kata Sandi</label>
                                             <input type="password" name="password"
                                                 class="form-control @error('password') is-invalid @enderror"
@@ -122,7 +134,7 @@
                                         </div>
 
                                         <div class="col-12">
-                                            <label for="yourPassword" class="form-label">KonfirmasiKata Sandi</label>
+                                            <label for="yourPassword" class="form-label">Konfirmasi Kata Sandi</label>
                                             <input type="password" name="password_confirmation"
                                                 class="form-control @error('password_confirmation"') is-invalid @enderror">
                                             @error('password_confirmation"')

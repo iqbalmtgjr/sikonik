@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Pelanggan;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
@@ -50,10 +52,11 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
+            'nama' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'notelp' => ['required', 'numeric'],
+            'nomor_telepon' => ['required', 'numeric'],
             'alamat' => ['required', 'string', 'max:255'],
+            'scan_ktp' => ['required'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -67,18 +70,30 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         $user = User::create([
-            'name' => $data['name'],
+            'name' => $data['nama'],
             'role' => 'pelanggan',
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
 
+        if (isset($data['scan_ktp']) && $data['scan_ktp']->isValid()) {
+            $file = $data['scan_ktp'];
+            $filename = time() . rand(100, 999) . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('ktp'), $filename);
+        } else {
+            // Jika file tidak valid, set nama file menjadi null atau berikan penanganan error
+            $filename = null;
+        }
+
         Pelanggan::create([
             'users_id' => $user->id,
-            'notelp' => $data['notelp'],
+            'no_telp' => $data['nomor_telepon'],
             'alamat' => $data['alamat'],
+            'scan_ktp' => $filename,
         ]);
 
+
+        flash()->preset('terdaftar');
         return $user;
     }
 }

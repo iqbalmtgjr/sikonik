@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('konsultasi', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('konsultasi');
+            $table->string('chat');
+            $table->string('bukti_bayar')->nullable();
+            $table->string('status');
             $table->timestamps();
         });
     }

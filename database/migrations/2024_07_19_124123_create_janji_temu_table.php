@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('janji_temu', function (Blueprint $table) {
             $table->id();
             $table->foreignId('users_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('klinik_hewan_id')->constrained('klinik_hewan')->onDelete('cascade');
-            $table->string('jenis');
+            $table->foreignId('klinik_id')->constrained('klinik')->onDelete('cascade');
+            $table->string('jenis_hewan');
+            $table->string('keluhan_hewan');
+            $table->string('catatan');
             $table->time('waktu');
-            $table->string('harga');
+            $table->string('status');
             $table->timestamps();
         });
     }

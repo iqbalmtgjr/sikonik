@@ -31,13 +31,7 @@
     <!-- Template Main CSS File -->
     <link href="{{ asset('/') }}assets/css/style.css" rel="stylesheet">
 
-    <!-- =======================================================
-  * Template Name: NiceAdmin
-  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-  * Updated: Apr 20 2024 with Bootstrap v5.3.3
-  * Author: BootstrapMade.com
-  * License: https://bootstrapmade.com/license/
-  ======================================================== -->
+    @stack('style')
 </head>
 
 <body>
@@ -46,7 +40,7 @@
     <header id="header" class="header fixed-top d-flex align-items-center">
 
         <div class="d-flex align-items-center justify-content-between">
-            <a href="index.html" class="logo d-flex align-items-center">
+            <a href="{{ route('home') }}" class="logo d-flex align-items-center">
                 <img src="assets/img/logo.png" alt="">
                 <span class="d-none d-lg-block">Sikonik</span>
             </a>
@@ -100,14 +94,14 @@
 
         <ul class="sidebar-nav" id="sidebar-nav">
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="index.html">
+            <li class="nav-item active">
+                <a class="nav-link {{ request()->is('home') ? '' : 'collapsed' }}" href="{{ route('home') }}">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="index.html">
+                <a class="nav-link {{ request()->is('pengguna') ? '' : 'collapsed' }}" href="{{ url('pengguna') }}">
                     <i class="bi bi-person-fill"></i>
                     <span>Kelola Pengguna</span>
                 </a>
@@ -177,6 +171,8 @@
 
     <!-- Template Main JS File -->
     <script src="{{ asset('/') }}assets/js/main.js"></script>
+
+    @stack('script')
 
 </body>
 
