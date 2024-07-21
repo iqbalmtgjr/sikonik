@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Dokter;
 use App\Models\User;
+use App\Models\Dokter;
+use App\Models\Pelanggan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -26,7 +27,7 @@ class PenggunaController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama' => 'required',
-            'email' => 'required',
+            'email' => 'required|unique:users',
             'password' => 'required',
             'alamat' => 'required',
             'nomor_telepon' => 'required',
@@ -60,36 +61,52 @@ class PenggunaController extends Controller
         return redirect()->back();
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(Request $request)
     {
-        //
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required',
+            'email' => 'required',
+            'nomor_telepon' => 'required',
+            'alamat' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            toastr()->error('Ada Kesalahan Saat Penginputan.');
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $user = User::where('email', $request->email)->first();
+        $user->update([
+            'name' => $request->nama,
+            'email' => $request->email,
+        ]);
+
+        if ($user->role == 'dokter') {
+            Dokter::where('user_id', $user->id)->update([
+                'no_telp' => $request->nomor_telepon,
+                'alamat' => $request->alamat,
+            ]);
+        } else {
+            Pelanggan::where('user_id', $user->id)->update([
+                'no_telp' => $request->nomor_telepon,
+                'alamat' => $request->alamat,
+            ]);
+        }
+
+        flash()->preset('terupdate');
+        return redirect()->back();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $user = User::find($id);
+        $user->delete();
+        flash()->preset('terhapus');
+        return redirect()->back();
     }
 
     public function getdata($id)

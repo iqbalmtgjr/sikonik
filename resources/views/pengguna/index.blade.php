@@ -12,7 +12,7 @@
                     <div class="card-header">
                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                             data-bs-target="#exampleModal">
-                            Tambah Baru
+                            <i class="bi bi-person-plus-fill me-1"></i> Tambah Pengguna
                         </button>
 
                         @include('pengguna.modal')
@@ -36,9 +36,12 @@
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ $user->role }}</td>
                                                 <td>
-                                                    <a href="{{ route('pengguna.edit', $user->id) }}"
+                                                    <a href="#edit" onclick="getdata({{ $user->id }})"
+                                                        data-bs-toggle="modal" data-id="{{ $user->id }}"
                                                         class="btn btn-primary btn-sm">Edit</a>
-                                                    <a class="btn btn-danger btn-sm">Hapus</a>
+                                                    <a href="javascript:void(0)" class="btn btn-danger btn-sm delete"
+                                                        onclick="hapusData({{ $user->id }})"
+                                                        data-nama="{{ $user->name }}">Hapus</a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -50,18 +53,52 @@
                 </div>
             </div>
     </section>
+    @include('pengguna.modaledit')
 @endsection
 
 @push('style')
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.0/css/dataTables.dataTables.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.3/dist/sweetalert2.min.css" rel="stylesheet">
 @endpush
 @push('script')
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/2.1.0/js/dataTables.min.js"></script>
     <script>
-        $(document).ready(function() {
-            new DataTable('#myTable');
+        $('#myTable').on('click', '.delete', function() {
+            let Nama = $(this).data().nama;
+            Swal.fire({
+                title: 'Apakah Anda Yakin Menghapus Data ' + Nama + '?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Hapus Data!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '{{ url('pengguna') }}/' + id,
+                        type: 'DELETE',
+                        data: {
+                            '_token': '{{ csrf_token() }}'
+                        },
+                        success: function(response) {
+                            if (response.status == 'success') {
+                                Swal.fire(
+                                    'Terhapus!',
+                                    'Data berhasil dihapus.',
+                                    'success'
+                                );
+                            } else {
+                                Swal.fire(
+                                    'Gagal!',
+                                    'Data gagal dihapus.',
+                                    'error'
+                                );
+                            }
+                        }
+                    });
+                }
+            });
         });
     </script>
 @endpush

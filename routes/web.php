@@ -16,7 +16,6 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 //kelola pengguna
 Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna');
 Route::post('/pengguna', [PenggunaController::class, 'store'])->name('pengguna.store');
-Route::get('/pengguna/{id}/edit', [PenggunaController::class, 'edit'])->name('pengguna.edit');
-Route::put('/pengguna/{id}', [PenggunaController::class, 'update'])->name('pengguna.update');
+Route::put('/pengguna', [PenggunaController::class, 'update'])->name('pengguna.update');
 Route::delete('/pengguna/{id}', [PenggunaController::class, 'destroy'])->name('pengguna.destroy');
 Route::get('/pengguna/getdata/{id}', [PenggunaController::class, 'getdata'])->name('getdatauser');
