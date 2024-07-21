@@ -56,10 +56,6 @@
     @include('pengguna.modaledit')
 @endsection
 
-@push('style')
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.0/css/dataTables.dataTables.min.css" />
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.3/dist/sweetalert2.min.css" rel="stylesheet">
-@endpush
 @push('script')
     <script>
         $('#myTable').on('click', '.delete', function() {
