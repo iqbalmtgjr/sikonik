@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="pagetitle">
-        <h1>Kelola Pengguna</h1>
+        <h1>Kelola Klinik</h1>
     </div>
 
     <section class="section">
@@ -12,48 +12,39 @@
                     <div class="card-header">
                         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                             data-bs-target="#exampleModal">
-                            <i class="bi bi-person-plus-fill me-1"></i> Tambah Pengguna
+                            <i class="bi bi-person-plus-fill me-1"></i> Tambah Klinik
                         </button>
 
-                        @include('pengguna.modal')
+                        @include('klinik.modal')
+                        @include('klinik.modaldokter')
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="myTable table table-hover table-lg">
+                                <table id="myTable" class="myTable table table-hover table-lg">
                                     <thead>
                                         <tr>
                                             <th>#</th>
                                             <th>Nama</th>
-                                            <th>Email</th>
-                                            <th>Roles</th>
-                                            {{-- <th>Klinik</th> --}}
+                                            <th>Alamat</th>
+                                            <th>No Telepon</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($users as $user)
+                                        @foreach ($klinik as $klinik)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $user->name }}</td>
-                                                <td>{{ $user->email }}</td>
-                                                <td>{{ $user->role }}</td>
-                                                {{-- @if ($user->role == 'dokter')
-                                                    @if (isset($user->dokter->klinik))
-                                                        <td>{{ $user->dokter->klinik->nama_klinik }}</td>
-                                                    @endif
-                                                @else
-                                                    <td>Tidak Ada</td>
-                                                @endif --}}
+                                                <td>{{ $klinik->nama_klinik }}</td>
+                                                <td>{{ $klinik->alamat }}</td>
+                                                <td>{{ $klinik->no_telp }}</td>
                                                 <td>
-                                                    @if ($user->role == 'dokter' || $user->role == 'admin_klinik')
-                                                        <a href="#klinik" onclick="getdata2({{ $user->id }})"
-                                                            data-bs-toggle="modal" class="btn btn-success btn-sm">Klinik</a>
-                                                    @endif
-                                                    <a href="#edit" onclick="getdata({{ $user->id }})"
-                                                        data-bs-toggle="modal" data-id="{{ $user->id }}"
+                                                    <a href="#dokter" onclick="getdata2({{ $klinik->id }})"
+                                                        data-bs-toggle="modal" class="btn btn-success btn-sm">Dokter</a>
+                                                    <a href="#edit" onclick="getdata({{ $klinik->id }})"
+                                                        data-bs-toggle="modal" data-id="{{ $klinik->id }}"
                                                         class="btn btn-primary btn-sm">Edit</a>
                                                     <a href="javascript:void(0)" class="btn btn-danger btn-sm delete"
-                                                        data-nama="{{ $user->name }}"
-                                                        data-id="{{ $user->id }}">Hapus</a>
+                                                        data-nama="{{ $klinik->nama_klinik }}"
+                                                        data-id="{{ $klinik->id }}">Hapus</a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -65,16 +56,16 @@
                 </div>
             </div>
     </section>
-    @include('pengguna.modaledit')
-    @include('pengguna.modalklinik')
+    @include('klinik.modaledit')
 @endsection
 
 @push('script')
     <script>
         $('#myTable').on('click', '.delete', function() {
-            let Nama = $(this).data().nama;
-            let Id = $(this).data().id;
-            // console.log(Id)
+            let data = $(this).data()
+            let Nama = data.nama;
+            let Id = data.id;
+            console.log(Id)
             Swal.fire({
                 title: 'Apakah Anda Yakin Menghapus Data ' + Nama + '?',
                 text: "Data yang dihapus tidak dapat dikembalikan!",
@@ -87,7 +78,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `{{ url('/pengguna/') }}/${Id}`,
+                        url: `{{ url('/klinik/delete') }}/${Id}`,
                         method: 'GET',
                         data: {
                             _token: '{{ csrf_token() }}'

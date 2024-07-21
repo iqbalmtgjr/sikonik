@@ -16,4 +16,9 @@ class Dokter extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function klinik()
+    {
+        return $this->belongsTo(Klinik::class);
+    }
 }

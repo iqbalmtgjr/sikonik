@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Dokter;
+use App\Models\Klinik;
 use App\Models\Pelanggan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -15,14 +16,11 @@ class PenggunaController extends Controller
      */
     public function index()
     {
-        $users = User::all();
-        return view('pengguna.index', compact('users'));
+        $users = User::where('role', '!=', 'admin')->get();
+        $klinik = Klinik::all();
+        return view('pengguna.index', compact('users', 'klinik'));
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -51,7 +49,7 @@ class PenggunaController extends Controller
 
         if ($request->role == 'dokter') {
             Dokter::create([
-                'users_id' => $user->id,
+                'user_id' => $user->id,
                 'no_telp' => $request->nomor_telepon,
                 'alamat' => $request->alamat,
             ]);
@@ -96,6 +94,30 @@ class PenggunaController extends Controller
                 'alamat' => $request->alamat,
             ]);
         }
+
+        flash()->preset('terupdate');
+        return redirect()->back();
+    }
+
+    public function updateKlinik(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'klinik' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            toastr()->error('Ada Kesalahan Saat Penginputan.');
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $user = User::where('email', $request->email2)->first();
+        Dokter::where('user_id', $user->id)->update([
+            'klinik_id' => $request->klinik,
+        ]);
 
         flash()->preset('terupdate');
         return redirect()->back();

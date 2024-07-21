@@ -104,6 +104,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link {{ request()->is('klinik') ? '' : 'collapsed' }}" href="{{ url('klinik') }}">
+                    <i class="bi bi-table"></i>
+                    <span>Data Klinik & Dokter</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link {{ request()->is('pengguna') ? '' : 'collapsed' }}" href="{{ url('pengguna') }}">
                     <i class="bi bi-person-fill"></i>
                     <span>Kelola Pengguna</span>
@@ -127,14 +133,6 @@
                     <span>Lihat Hasil Konsultasi</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="index.html">
-                    <i class="bi bi-table"></i>
-                    <span>Data Klinik & Dokter</span>
-                </a>
-            </li>
-
-
         </ul>
 
     </aside><!-- End Sidebar-->
@@ -181,7 +179,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.3/dist/sweetalert2.all.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#myTable').DataTable({
+            $('.myTable').DataTable({
                 "language": {
                     "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json"
                 }
