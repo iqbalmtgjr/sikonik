@@ -28,3 +28,4 @@ Route::post('/klinik', [KlinikController::class, 'store'])->name('klinik.store')
 Route::put('/klinik', [KlinikController::class, 'update'])->name('klinik.update');
 Route::get('/klinik/delete/{id}', [KlinikController::class, 'destroy'])->name('klinik.destroy');
 Route::get('/klinik/getdata/{id}', [KlinikController::class, 'getdata'])->name('getdataklinik');
+Route::get('/klinik/getdata2/{id}', [KlinikController::class, 'getdata2'])->name('getdataklinik2');

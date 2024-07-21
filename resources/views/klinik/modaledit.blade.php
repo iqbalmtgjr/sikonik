@@ -79,7 +79,7 @@
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     console.log(errorThrown);
-                    alert('Error');
+                    alert('Error ' + errorThrown);
                 }
             });
         };

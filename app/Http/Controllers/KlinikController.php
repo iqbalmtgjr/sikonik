@@ -12,22 +12,12 @@ class KlinikController extends Controller
     /**
      * Display a listing of the clinics.
      */
-    public function index(Request $request)
+    public function index()
     {
-        // dd($request->id);
-        if ($request->id_klinik) {
-            $dokter = Dokter::where('klinik_id', $request->id)->get();
-        } else {
-            $dokter = Dokter::all();
-        }
         $klinik = Klinik::all();
-        return view('klinik.index', compact('klinik', 'dokter'));
+        return view('klinik.index', compact('klinik'));
     }
 
-    /**
-     * Store a newly created clinic in storage.
-     * Adjust the validation rules and data fields as necessary for clinic details.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -98,6 +88,12 @@ class KlinikController extends Controller
     {
         $data = Klinik::find($id);
         $data->dokter;
+        return $data;
+    }
+
+    public function getdata2($id)
+    {
+        $data = Dokter::where('klinik_id', $id)->with('user')->get();
         return $data;
     }
 }

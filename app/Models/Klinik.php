@@ -11,4 +11,14 @@ class Klinik extends Model
 
     protected $guarded = ['id'];
     protected $table = 'klinik';
+
+    public function dokter()
+    {
+        return $this->hasOne(Dokter::class);
+    }
+
+    public function adminklinik()
+    {
+        return $this->hasOne(Adminklinik::class);
+    }
 }

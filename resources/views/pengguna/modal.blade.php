@@ -48,19 +48,21 @@
                             </span>
                         @enderror
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Role</label>
-                        <select class="form-select @error('role') is-invalid @enderror" name="role">
-                            <option value="">Pilih Role</option>
-                            <option value="admin_klinik">Admin Klinik</option>
-                            <option value="dokter">Dokter</option>
-                        </select>
-                        @error('role')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
+                    @if (auth()->user()->role == 'admin')
+                        <div class="mb-3">
+                            <label class="form-label">Role</label>
+                            <select class="form-select @error('role') is-invalid @enderror" name="role">
+                                <option value="">Pilih Role</option>
+                                <option value="admin_klinik">Admin Klinik</option>
+                                <option value="dokter">Dokter</option>
+                            </select>
+                            @error('role')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    @endif
                     <div class="mb-3">
                         <label class="form-label">Password</label>
                         <input type="password" class="form-control @error('password') is-invalid @enderror"

@@ -19,10 +19,10 @@
                         @include('klinik.modaldokter')
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table id="myTable" class="myTable table table-hover table-lg">
+                                <table class="myTable table table-hover table-lg">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
+                                            <th>No</th>
                                             <th>Nama</th>
                                             <th>Alamat</th>
                                             <th>No Telepon</th>
@@ -61,7 +61,7 @@
 
 @push('script')
     <script>
-        $('#myTable').on('click', '.delete', function() {
+        $('.myTable').on('click', '.delete', function() {
             let data = $(this).data()
             let Nama = data.nama;
             let Id = data.id;

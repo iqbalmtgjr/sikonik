@@ -86,7 +86,7 @@ class RegisterController extends Controller
         }
 
         Pelanggan::create([
-            'users_id' => $user->id,
+            'user_id' => $user->id,
             'no_telp' => $data['nomor_telepon'],
             'alamat' => $data['alamat'],
             'scan_ktp' => $filename,

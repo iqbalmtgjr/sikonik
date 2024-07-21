@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Adminklinik;
 use App\Models\User;
 use App\Models\Dokter;
 use App\Models\Klinik;
@@ -16,21 +17,41 @@ class PenggunaController extends Controller
      */
     public function index()
     {
-        $users = User::where('role', '!=', 'admin')->get();
+        // dd(auth()->user()->adminklinik->klinik_id);
+        if (auth()->user()->role == 'admin_klinik') {
+            $dokter = Dokter::where('klinik_id', auth()->user()->adminklinik->klinik_id)
+                ->get();
+            $id = $dokter->pluck('user_id');
+            $users = User::whereIn('id', $id)
+                ->get();
+        } else {
+            $users = User::where('role', '!=', 'admin')->get();
+        }
         $klinik = Klinik::all();
         return view('pengguna.index', compact('users', 'klinik'));
     }
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'nama' => 'required',
-            'email' => 'required|unique:users',
-            'password' => 'required',
-            'alamat' => 'required',
-            'nomor_telepon' => 'required',
-            'role' => 'required',
-        ]);
+        if (auth()->user()->role == 'admin') {
+            $validator = Validator::make($request->all(), [
+                'nama' => 'required',
+                'email' => 'required|unique:users',
+                'password' => 'required',
+                'alamat' => 'required',
+                'nomor_telepon' => 'required',
+                'role' => 'required',
+            ]);
+        } else {
+            $validator = Validator::make($request->all(), [
+                'nama' => 'required',
+                'email' => 'required|unique:users',
+                'password' => 'required',
+                'alamat' => 'required',
+                'nomor_telepon' => 'required',
+            ]);
+        }
+
 
         if ($validator->fails()) {
             toastr()->error('Ada Kesalahan Saat Penginputan.');
@@ -40,20 +61,44 @@ class PenggunaController extends Controller
                 ->withInput();
         }
 
-        $user = User::create([
-            'name' => $request->nama,
-            'email' => $request->email,
-            'password' => $request->password,
-            'role' => $request->role,
-        ]);
 
-        if ($request->role == 'dokter') {
+
+        if (auth()->user()->role == 'admin') {
+            $user = User::create([
+                'name' => $request->nama,
+                'email' => $request->email,
+                'password' => $request->password,
+                'role' => $request->role,
+            ]);
+
+            if ($request->role == 'dokter') {
+                Dokter::create([
+                    'user_id' => $user->id,
+                    'no_telp' => $request->nomor_telepon,
+                    'alamat' => $request->alamat,
+                ]);
+            } elseif ($request->role == 'admin_klinik') {
+                Adminklinik::create([
+                    'user_id' => $user->id,
+                    'no_telp' => $request->nomor_telepon,
+                    'alamat' => $request->alamat,
+                ]);
+            }
+        } else {
+            $user = User::create([
+                'name' => $request->nama,
+                'email' => $request->email,
+                'password' => $request->password,
+                'role' => 'dokter',
+            ]);
             Dokter::create([
                 'user_id' => $user->id,
+                'klinik_id' => auth()->user()->adminklinik->klinik_id,
                 'no_telp' => $request->nomor_telepon,
                 'alamat' => $request->alamat,
             ]);
         }
+
 
         flash()->preset('tersimpan');
         return redirect()->back();
@@ -88,6 +133,11 @@ class PenggunaController extends Controller
                 'no_telp' => $request->nomor_telepon,
                 'alamat' => $request->alamat,
             ]);
+        } elseif ($user->role == 'admin_klinik') {
+            Adminklinik::where('user_id', $user->id)->update([
+                'no_telp' => $request->nomor_telepon,
+                'alamat' => $request->alamat,
+            ]);
         } else {
             Pelanggan::where('user_id', $user->id)->update([
                 'no_telp' => $request->nomor_telepon,
@@ -115,9 +165,15 @@ class PenggunaController extends Controller
         }
 
         $user = User::where('email', $request->email2)->first();
-        Dokter::where('user_id', $user->id)->update([
-            'klinik_id' => $request->klinik,
-        ]);
+        if ($user->role == 'dokter') {
+            Dokter::where('user_id', $user->id)->update([
+                'klinik_id' => $request->klinik,
+            ]);
+        } elseif ($user->role == 'admin_klinik') {
+            Adminklinik::where('user_id', $user->id)->update([
+                'klinik_id' => $request->klinik,
+            ]);
+        }
 
         flash()->preset('terupdate');
         return redirect()->back();
@@ -136,6 +192,7 @@ class PenggunaController extends Controller
         $data = User::find($id);
         $data->dokter;
         $data->pelanggan;
+        $data->adminklinik;
         return $data;
     }
 }

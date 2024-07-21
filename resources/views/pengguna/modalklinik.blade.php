@@ -45,10 +45,12 @@
                 url: url,
                 method: 'GET',
                 success: function(data) {
-                    console.log(data.dokter.klinik_id);
+                    console.log(data);
                     $('#email2').val(data.email);
                     if (data.dokter) {
                         $('#klinik2').val(data.dokter.klinik_id);
+                    } else if (data.adminklinik) {
+                        $('#klinik2').val(data.adminklinik.klinik_id);
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {

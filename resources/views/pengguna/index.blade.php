@@ -21,11 +21,13 @@
                                 <table class="myTable table table-hover table-lg">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
+                                            <th>No</th>
                                             <th>Nama</th>
                                             <th>Email</th>
                                             <th>Roles</th>
-                                            {{-- <th>Klinik</th> --}}
+                                            @if (auth()->user()->role == 'admin')
+                                                <th>Klinik</th>
+                                            @endif
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -36,17 +38,35 @@
                                                 <td>{{ $user->name }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>{{ $user->role }}</td>
-                                                {{-- @if ($user->role == 'dokter')
-                                                    @if (isset($user->dokter->klinik))
-                                                        <td>{{ $user->dokter->klinik->nama_klinik }}</td>
+                                                @if (auth()->user()->role == 'admin')
+                                                    @if ($user->role == 'dokter')
+                                                        @if (isset($user->dokter->klinik))
+                                                            <td>{{ $user->dokter->klinik->nama_klinik }}</td>
+                                                        @else
+                                                            <td class="text-danger">Tidak Ada</td>
+                                                        @endif
+                                                    @elseif($user->role == 'admin_klinik')
+                                                        @if (isset($user->adminklinik->klinik))
+                                                            <td>{{ $user->adminklinik->klinik->nama_klinik }}</td>
+                                                        @else
+                                                            <td class="text-danger">Tidak Ada</td>
+                                                        @endif
+                                                    @else
+                                                        <td class="text-danger">Tidak Ada</td>
                                                     @endif
-                                                @else
-                                                    <td>Tidak Ada</td>
-                                                @endif --}}
+                                                @endif
                                                 <td>
-                                                    @if ($user->role == 'dokter' || $user->role == 'admin_klinik')
-                                                        <a href="#klinik" onclick="getdata2({{ $user->id }})"
-                                                            data-bs-toggle="modal" class="btn btn-success btn-sm">Klinik</a>
+                                                    @if (auth()->user()->role == 'admin')
+                                                        @if ($user->role == 'dokter' || $user->role == 'admin_klinik')
+                                                            <a href="#klinik" onclick="getdata2({{ $user->id }})"
+                                                                data-bs-toggle="modal"
+                                                                class="btn btn-success btn-sm">Klinik</a>
+                                                        @endif
+                                                    @endif
+                                                    @if ($user->role == 'pelanggan')
+                                                        <a href="{{ asset('ktp/' . $user->pelanggan->scan_ktp) }}"
+                                                            target="_blank" class="btn btn-success btn-sm">Lihat
+                                                            KTP</a>
                                                     @endif
                                                     <a href="#edit" onclick="getdata({{ $user->id }})"
                                                         data-bs-toggle="modal" data-id="{{ $user->id }}"
@@ -71,7 +91,7 @@
 
 @push('script')
     <script>
-        $('#myTable').on('click', '.delete', function() {
+        $('.myTable').on('click', '.delete', function() {
             let Nama = $(this).data().nama;
             let Id = $(this).data().id;
             // console.log(Id)

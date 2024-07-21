@@ -74,9 +74,12 @@
                     if (data.pelanggan) {
                         $('#alamat').val(data.pelanggan.alamat);
                         $('#nomor_telepon').val(data.pelanggan.no_telp);
-                    } else {
+                    } else if (data.dokter) {
                         $('#alamat').val(data.dokter.alamat);
                         $('#nomor_telepon').val(data.dokter.no_telp);
+                    } else {
+                        $('#alamat').val(data.adminklinik.alamat);
+                        $('#nomor_telepon').val(data.adminklinik.no_telp);
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
