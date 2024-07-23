@@ -9,13 +9,17 @@ use Illuminate\Support\Facades\Validator;
 
 class JanjitemuController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $janji = Janjitemu::all();
+        if (auth()->user()->role == 'admin') {
+            $janji = Janjitemu::all();
+        } elseif (auth()->user()->role == 'pelanggan') {
+            $janji = Janjitemu::where('user_id', auth()->user()->id)->get();
+        } else {
+            $janji = Janjitemu::where('klinik_id', auth()->user()->adminklinik->klinik_id)->get();
+        }
         $klinik = Klinik::all();
+
         return view('janjitemu.index', compact('janji', 'klinik'));
     }
 

@@ -34,6 +34,8 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.0/css/dataTables.dataTables.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.3/dist/sweetalert2.min.css" rel="stylesheet">
 
+    @livewireStyles
+
     @stack('style')
 </head>
 
@@ -116,7 +118,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="index.html">
+                <a class="nav-link {{ request()->is('konsultasi') ? '' : 'collapsed' }}"
+                    href="{{ url('konsultasi') }}">
                     <i class="bi bi-chat-square-text"></i>
                     <span>Konsultasi</span>
                 </a>
@@ -127,12 +130,12 @@
                     <span>Buat Janji Temu</span>
                 </a>
             </li>
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link collapsed" href="index.html">
                     <i class="bi bi-search"></i>
                     <span>Lihat Hasil Konsultasi</span>
                 </a>
-            </li>
+            </li> --}}
         </ul>
 
     </aside><!-- End Sidebar-->
@@ -140,6 +143,7 @@
     <main id="main" class="main">
 
         @yield('content')
+        {{ isset($slot) ? $slot : null }}
 
     </main><!-- End #main -->
 
@@ -186,6 +190,8 @@
             });
         });
     </script>
+
+    @livewireScripts
     @stack('script')
 
 </body>

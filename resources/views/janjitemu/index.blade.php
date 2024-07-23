@@ -8,7 +8,8 @@
     @if (auth()->user()->role == 'pelanggan')
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             Harap tekan tombol <strong>Lihat Catatan Klinik</strong> pada kolom aksi apabila status <span
-                class="badge bg-danger">Ditolak</span>
+                class="badge bg-danger">Ditolak</span> ataupun <span class="badge bg-success">Diterima</span> untuk melihat
+            catatan dari klinik
         </div>
     @endif
 

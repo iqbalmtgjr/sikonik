@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KlinikController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\JanjitemuController;
+use App\Livewire\Konsultasi;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -39,3 +40,6 @@ Route::put('/janjitemu/catatan', [JanjitemuController::class, 'updatecatatan'])-
 Route::get('/janjitemu/delete/{id}', [JanjitemuController::class, 'destroy'])->name('janjitemu.destroy');
 Route::get('/janjitemu/getdata/{id}', [JanjitemuController::class, 'getdata'])->name('getdatajanjitemu');
 Route::get('/janjitemu/getdata2/{id}', [JanjitemuController::class, 'getdata2'])->name('getdatajanjitemu2');
+
+//konsultasi
+Route::get('/konsultasi', Konsultasi::class);
