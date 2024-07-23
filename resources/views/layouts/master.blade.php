@@ -122,7 +122,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="index.html">
+                <a class="nav-link {{ request()->is('janjitemu') ? '' : 'collapsed' }}" href="{{ url('janjitemu') }}">
                     <i class="bi bi-plus-square"></i>
                     <span>Buat Janji Temu</span>
                 </a>

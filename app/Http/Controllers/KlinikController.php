@@ -80,6 +80,7 @@ class KlinikController extends Controller
     {
         $klinik = Klinik::find($id);
         $klinik->delete();
+
         flash()->preset('terhapus');
         return redirect()->back();
     }
