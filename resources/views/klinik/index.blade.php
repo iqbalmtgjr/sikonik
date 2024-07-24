@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="pagetitle">
-        <h1>Kelola Klinik</h1>
+        <h1>Data Klinik & Dokter</h1>
     </div>
 
     <section class="section">
@@ -10,10 +10,12 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
-                            <i class="bi bi-person-plus-fill me-1"></i> Tambah Klinik
-                        </button>
+                        @if (auth()->user()->role == 'admin')
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#exampleModal">
+                                <i class="bi bi-person-plus-fill me-1"></i> Tambah Klinik
+                            </button>
+                        @endif
 
                         @include('klinik.modal')
                         @include('klinik.modaldokter')
@@ -38,10 +40,13 @@
                                                 <td>{{ $klinik->no_telp }}</td>
                                                 <td>
                                                     <a href="#dokter" onclick="getdata2({{ $klinik->id }})"
-                                                        data-bs-toggle="modal" class="btn btn-success btn-sm">Dokter</a>
-                                                    <a href="#edit" onclick="getdata({{ $klinik->id }})"
-                                                        data-bs-toggle="modal" data-id="{{ $klinik->id }}"
-                                                        class="btn btn-primary btn-sm">Edit</a>
+                                                        data-bs-toggle="modal" class="btn btn-success btn-sm">Lihat
+                                                        Dokter</a>
+                                                    @if (Auth::user()->role == 'admin' || auth()->user()->role == 'admin_klinik')
+                                                        <a href="#edit" onclick="getdata({{ $klinik->id }})"
+                                                            data-bs-toggle="modal" data-id="{{ $klinik->id }}"
+                                                            class="btn btn-primary btn-sm">Edit</a>
+                                                    @endif
                                                     <a href="javascript:void(0)" class="btn btn-danger btn-sm delete"
                                                         data-nama="{{ $klinik->nama_klinik }}"
                                                         data-id="{{ $klinik->id }}">Hapus</a>

@@ -111,19 +111,24 @@
                     <span>Data Klinik & Dokter</span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link {{ request()->is('pengguna') ? '' : 'collapsed' }}" href="{{ url('pengguna') }}">
-                    <i class="bi bi-person-fill"></i>
-                    <span>Kelola Pengguna</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ request()->is('konsultasi') ? '' : 'collapsed' }}"
-                    href="{{ url('konsultasi') }}">
-                    <i class="bi bi-chat-square-text"></i>
-                    <span>Konsultasi</span>
-                </a>
-            </li>
+            @if (Auth::user()->role == 'admin' || Auth()->user()->role == 'admin_klinik')
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('pengguna') ? '' : 'collapsed' }}"
+                        href="{{ url('pengguna') }}">
+                        <i class="bi bi-person-fill"></i>
+                        <span>Kelola Pengguna</span>
+                    </a>
+                </li>
+            @endif
+            @if (Auth::user()->role == 'dokter' || Auth()->user()->role == 'pelanggan')
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('konsultasi') ? '' : 'collapsed' }}"
+                        href="{{ url('konsultasi') }}">
+                        <i class="bi bi-chat-square-text"></i>
+                        <span>Konsultasi</span>
+                    </a>
+                </li>
+            @endif
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('janjitemu') ? '' : 'collapsed' }}" href="{{ url('janjitemu') }}">
                     <i class="bi bi-plus-square"></i>

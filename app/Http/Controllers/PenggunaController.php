@@ -12,9 +12,6 @@ use Illuminate\Support\Facades\Validator;
 
 class PenggunaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         // dd(auth()->user()->adminklinik->klinik_id);
@@ -60,8 +57,6 @@ class PenggunaController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-
-
 
         if (auth()->user()->role == 'admin') {
             $user = User::create([
