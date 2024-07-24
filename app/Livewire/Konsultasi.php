@@ -23,7 +23,7 @@ class Konsultasi extends Component
 
     public function render()
     {
-        return view('livewire.konsultasi', [
+        return view('livewire.konsultasi2', [
             'konsultasi' => KonsultasiModel::where('user_id', '!=', 1)->orderBy('id', 'asc')->get(),
         ]);
     }

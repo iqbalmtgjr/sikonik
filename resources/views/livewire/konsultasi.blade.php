@@ -1,3 +1,5 @@
+<!-- resources/views/livewire/chat.blade.php -->
+
 <div>
     <div class="pagetitle">
         <h1>Konsultasi</h1>
@@ -8,11 +10,10 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <div class="mt-4 mb-3">
-                            <h5>Chat Konsultasi</h5>
-                            <hr>
-                        </div>
-                        <div class="mt-4" wire:poll>
+                        <h5 class="text-center mt-3">Chat Konsultasi</h5>
+                        <hr>
+
+                        <div class="chat-scrollable h-100" wire:poll>
                             @foreach ($konsultasi as $item)
                                 @if ($item->user_id == auth()->user()->id)
                                     <div class="d-flex justify-content-end mb-3">
@@ -29,31 +30,32 @@
                                 @endif
                             @endforeach
                         </div>
-                        <div class="mt-3">
-                            <hr>
-                            <form wire:submit="kirim" onsubmit="event.target.chat.blur()">
-                                <div class="row">
-                                    <div class="col-11">
-                                        <input type="text" class="form-control" placeholder="Tulis pesan disini..."
-                                            wire:model.debounce.500ms="chat"
-                                            onkeydown="if (event.key === 'Enter') this.form.kirim()">
-                                    </div>
-                                    <div class="col-1 d-flex align-items-center">
-                                        <button type="submit" class="btn btn-primary ms-auto">Kirim</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+                        <form wire:submit="kirim" onsubmit="event.target.chat.blur()" class="card-footer d-flex">
+                            <div class="col-11">
+                                <input type="text" class="form-control chat-input"
+                                    placeholder="Tulis pesan disini..." wire:model.debounce.500ms="chat"
+                                    onkeydown="if (event.key === 'Enter') this.form.kirim()">
+                            </div>
+                            <div class="col-1 d-flex align-items-center">
+                                <button type="submit" class="btn btn-primary ms-auto">Kirim</button>
+                            </div>
+                        </form>
                     </div>
+
                 </div>
             </div>
         </div>
     </section>
-    @push('script')
-        <script>
-            $wire.on('chatAdded', (event) => {
-                alert('tes');
-            });
-        </script>
-    @endpush
+
+
+    <script>
+        function updateChatScroll() {
+            const chatScrollable = document.querySelector('.chat-scrollable');
+            chatScrollable.scrollTop = chatScrollable.scrollHeight;
+        }
+
+        window.addEventListener('livewire:load', updateChatScroll);
+
+        Livewire.on('chatAdded', updateChatScroll);
+    </script>
 </div>
