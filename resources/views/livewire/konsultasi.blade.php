@@ -9,7 +9,7 @@
                     </div>
                 </div>
                 <div class="row flex-grow-1">
-                    <div class="col-12 chat-scrollable">
+                    <div class="col-12 chat-scrollable" style="height: calc(110vh - 140px)">
                         <div wire:poll>
                             @foreach ($konsultasi as $item)
                                 @php

@@ -81,7 +81,6 @@ class RegisterController extends Controller
             $filename = time() . rand(100, 999) . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('ktp'), $filename);
         } else {
-            // Jika file tidak valid, set nama file menjadi null atau berikan penanganan error
             $filename = null;
         }
 

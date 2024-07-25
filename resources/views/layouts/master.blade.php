@@ -122,19 +122,50 @@
             @endif
             @if (Auth::user()->role == 'dokter' || Auth()->user()->role == 'pelanggan')
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('konsultasi') ? '' : 'collapsed' }}"
-                        href="{{ url('konsultasi') }}">
-                        <i class="bi bi-chat-square-text"></i>
-                        <span>Konsultasi</span>
+                    @php
+                        $transaksi = App\Models\Transaksi::where('user_id', Auth::user()->id)->first();
+                        // dd($transaksi);
+                    @endphp
+                    @if (Auth::user()->role == 'pelanggan' && $transaksi == null)
+                        <a class="nav-link {{ request()->is('konsultasi') ? '' : 'collapsed' }}"
+                            href="{{ url('transaksi/tagihan') }}">
+                            <i class="bi bi-chat-square-text"></i>
+                            <span>Konsultasi</span>
+                        </a>
+                    @elseif($transaksi != null && $transaksi->status == 'Tidak Valid')
+                        <a class="nav-link {{ request()->is('konsultasi') ? '' : 'collapsed' }}"
+                            href="{{ url('transaksi/tagihan') }}">
+                            <i class="bi bi-chat-square-text"></i>
+                            <span>Konsultasi</span>
+                        </a>
+                    @else
+                        <a class="nav-link {{ request()->is('konsultasi') ? '' : 'collapsed' }}"
+                            href="{{ url('konsultasi') }}">
+                            <i class="bi bi-chat-square-text"></i>
+                            <span>Konsultasi</span>
+                        </a>
+                    @endif
+                </li>
+            @endif
+            @if (Auth::user()->role != 'dokter')
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('janjitemu') ? '' : 'collapsed' }}"
+                        href="{{ url('janjitemu') }}">
+                        <i class="bi bi-plus-square"></i>
+                        <span>Buat Janji Temu</span>
                     </a>
                 </li>
             @endif
-            <li class="nav-item">
-                <a class="nav-link {{ request()->is('janjitemu') ? '' : 'collapsed' }}" href="{{ url('janjitemu') }}">
-                    <i class="bi bi-plus-square"></i>
-                    <span>Buat Janji Temu</span>
-                </a>
-            </li>
+            @if (Auth::user()->role == 'admin_klinik')
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is('transaksi') ? '' : 'collapsed' }}"
+                        href="{{ url('transaksi') }}">
+                        <i class="bi bi-cash"></i>
+                        <span>Transaksi</span>
+                    </a>
+                </li>
+            @endif
+
             {{-- <li class="nav-item">
                 <a class="nav-link collapsed" href="index.html">
                     <i class="bi bi-search"></i>

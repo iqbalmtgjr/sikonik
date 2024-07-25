@@ -1,12 +1,13 @@
 <?php
 
+use App\Livewire\Konsultasi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KlinikController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\JanjitemuController;
-use App\Livewire\Konsultasi;
+use App\Http\Controllers\TransaksiController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -41,6 +42,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/janjitemu/delete/{id}', [JanjitemuController::class, 'destroy'])->name('janjitemu.destroy');
     Route::get('/janjitemu/getdata/{id}', [JanjitemuController::class, 'getdata'])->name('getdatajanjitemu');
     Route::get('/janjitemu/getdata2/{id}', [JanjitemuController::class, 'getdata2'])->name('getdatajanjitemu2');
+
+    //transaksi
+    Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi');
+    Route::get('/transaksi/tagihan', [TransaksiController::class, 'tagihan'])->name('tagihan');
+    Route::post('/transaksi', [TransaksiController::class, 'store'])->name('transaksi.store');
+    Route::put('/transaksi', [TransaksiController::class, 'update'])->name('transaksi.update');
+    Route::get('/transaksi/delete/{id}', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
+    Route::get('/transaksi/getdata/{id}', [TransaksiController::class, 'getdata'])->name('getdatatransaksi');
 
     //konsultasi
     Route::get('/konsultasi', Konsultasi::class);
