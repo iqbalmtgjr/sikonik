@@ -39,7 +39,7 @@ class TransaksiController extends Controller
 
         $data = Transaksi::where('user_id', auth()->user()->id)->where('status', 'Menunggu')->first();
         // hapus foto lama
-        if ($data->bukti_bayar) {
+        if (isset($data->bukti_bayar)) {
             $old_file = public_path('bukti/') . $data->bukti_bayar;
             if (file_exists($old_file)) {
                 unlink($old_file);
