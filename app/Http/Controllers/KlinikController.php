@@ -18,6 +18,12 @@ class KlinikController extends Controller
         return view('klinik.index', compact('klinik'));
     }
 
+    // public function index()
+    // {
+    //     $klinik = Klinik::all();
+    //     return view('daftarklinik.indexklinik', compact('klinik'));
+    // }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

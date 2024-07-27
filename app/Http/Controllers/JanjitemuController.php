@@ -19,7 +19,7 @@ class JanjitemuController extends Controller
             $janji = Janjitemu::where('klinik_id', auth()->user()->adminklinik->klinik_id)->get();
         }
         $klinik = Klinik::all();
-
+        ///  dd($janji);
         return view('janjitemu.index', compact('janji', 'klinik'));
     }
 
@@ -84,7 +84,7 @@ class JanjitemuController extends Controller
             ]);
         } else {
             $janji->update([
-                'user_id' => auth()->user()->id,
+                // 'user_id' => auth()->user()->id,
                 'klinik_id' => $request->nama_klinik,
                 'jenis_hewan' => $request->jenis_hewan,
                 'keluhan_hewan' => $request->keluhan_hewan,
