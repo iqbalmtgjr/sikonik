@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('klinik_id')->nullable()->constrained('klinik')->onDelete('cascade');
             $table->string('alamat');
+            $table->string('status')->nullable();
             $table->string('no_telp');
             $table->timestamps();
         });

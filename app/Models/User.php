@@ -3,9 +3,10 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,7 @@ class User extends Authenticatable
         'role',
         'email',
         'password',
+        'is_online',
     ];
 
     /**
@@ -59,5 +61,10 @@ class User extends Authenticatable
     public function adminklinik()
     {
         return $this->hasOne(Adminklinik::class);
+    }
+
+    public function transaksi()
+    {
+        return $this->hasOne(Transaksi::class);
     }
 }

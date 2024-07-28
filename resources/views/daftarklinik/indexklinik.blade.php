@@ -1,26 +1,33 @@
 @extends('layouts.master')
 
 @section('content')
-<div class="row">
-    @foreach ($klinik as $klinik)
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-body">
-                <h5 class="card-title">{{ $klinik->nama_klinik }}</h5>
-                <h6 class="card-subtitle mb-2 text-muted">{{ $klinik->alamat }}</h6>
-                <p class="card-text">{{ $klinik->deskripsi }}</p>
-                {{-- <p class="card-text"><a href="#" class="btn btn-primary">Button</a></p> --}}
-                <a href="{{ url('konsultasi') }}" class="btn btn-sm btn-success">Konsultasi</a>
-                <a href="{{ url('janjitemu') }}" class="btn btn-sm btn-primary">Janjian</a>
-                <a href="#dokter" onclick="getdata2({{ $klinik->id }})"
-                    data-bs-toggle="modal" class="btn btn-warning btn-sm">Dokter</a>
+    <div class="row">
+        @php
+            $konsultasi = \App\Models\Konsultasi::where('user_id', Auth::user()->id)->first();
+        @endphp
+        @foreach ($klinik as $klinik)
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $klinik->nama_klinik }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ $klinik->alamat }}</h6>
+                        <p class="card-text">{{ $klinik->deskripsi }}</p>
+                        @if ($konsultasi)
+                            <a href="{{ url('konsultasi') . '/' . $konsultasi->dokter_id }}"
+                                class="btn btn-sm btn-success">Konsultasi</a>
+                        @else
+                            <a href="{{ url('konsultasi/dokter') }}" class="btn btn-sm btn-success">Konsultasi</a>
+                        @endif
+                        <a href="{{ url('janjitemu') }}" class="btn btn-sm btn-primary">Janjian</a>
+                        <a href="#dokter" onclick="getdata2({{ $klinik->id }})" data-bs-toggle="modal"
+                            class="btn btn-warning btn-sm">Dokter</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    @endforeach 
-</div>
-@include('klinik.modaledit')
-@include('klinik.modaldokter')
+        @endforeach
+    </div>
+    @include('klinik.modaledit')
+    @include('klinik.modaldokter')
 @endsection
 
 @push('script')

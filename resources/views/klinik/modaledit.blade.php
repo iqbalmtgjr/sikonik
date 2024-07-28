@@ -42,6 +42,16 @@
                         @enderror
                     </div>
                     <div class="mb-3">
+                        <label class="form-label">No Rekening</label>
+                        <input type="number" class="form-control @error('nomor_rekening') is-invalid @enderror"
+                            name="nomor_rekening" id="no_rek" placeholder="Masukkan no rekening klinik">
+                        @error('nomor_rekening')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label">Deskripsi</label>
                         <textarea rows="4" class="form-control @error('deskripsi') is-invalid @enderror" name="deskripsi" id="deskripsi"
                             placeholder="Masukkan deskripsi"></textarea>
@@ -75,6 +85,7 @@
                     $('#nama_klinik').val(data.nama_klinik);
                     $('#nomor_telepon').val(data.no_telp);
                     $('#alamat').val(data.alamat);
+                    $('#no_rek').val(data.no_rek);
                     $('#deskripsi').val(data.deskripsi);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {

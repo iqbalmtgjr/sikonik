@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Klinik;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -10,17 +11,29 @@ class TransaksiController extends Controller
 {
     public function index()
     {
-        $data = Transaksi::all();
+        $data = Transaksi::where('klinik_id', auth()->user()->adminklinik->klinik_id)->get();
         return view('transaksi.index', compact('data'));
     }
 
-    public function tagihan()
+    public function tagihan($klinik_id)
     {
-        return view('transaksi.tagihan');
+        $klinik = Klinik::find($klinik_id);
+        $transaksi = Transaksi::where('user_id', auth()->user()->id)->where('klinik_id', $klinik_id)->first();
+        $klinik_skrng = Transaksi::where('user_id', auth()->user()->id)->first();
+        // dd($transaksi);
+        if ($klinik_skrng == null) {
+            return view('transaksi.tagihan', compact('klinik'));
+        } else if ($klinik_skrng->klinik_id != $klinik_id) {
+            flash('Transaksi anda berada pada klinik yang lain', 'error');
+            return redirect()->back();
+        }
+
+        return view('transaksi.tagihan', compact('klinik'));
     }
 
     public function store(Request $request)
     {
+        // dd($request->klinik_id);
         $validator = Validator::make($request->all(), [
             'bukti_bayar' => 'required',
         ]);
@@ -37,9 +50,9 @@ class TransaksiController extends Controller
         $filename = time() . rand(100, 999) . '.' . $file->getClientOriginalExtension();
         $file->move(public_path('bukti'), $filename);
 
-        $data = Transaksi::where('user_id', auth()->user()->id)->where('status', 'Menunggu')->first();
+        $data = Transaksi::where('user_id', auth()->user()->id)->first();
         // hapus foto lama
-        if (isset($data->bukti_bayar)) {
+        if (isset($data->bukti_bayar) && $data->status == 'Menunggu') {
             $old_file = public_path('bukti/') . $data->bukti_bayar;
             if (file_exists($old_file)) {
                 unlink($old_file);
@@ -51,9 +64,23 @@ class TransaksiController extends Controller
 
             flash()->preset('terupdate');
             return redirect()->back();
+        } elseif (isset($data->bukti_bayar) && $data->status == 'Tidak Valid') {
+            $old_file = public_path('bukti/') . $data->bukti_bayar;
+            if (file_exists($old_file)) {
+                unlink($old_file);
+            }
+
+            $data->update([
+                'bukti_bayar' => $filename,
+                'status' => 'Menunggu',
+            ]);
+
+            flash()->preset('terupdate');
+            return redirect()->back();
         } else {
             Transaksi::create([
                 'user_id' => auth()->user()->id,
+                'klinik_id' => $request->klinik_id,
                 'bukti_bayar' => $filename,
                 'harga' => 20000,
                 'status' => 'Menunggu',
@@ -84,6 +111,14 @@ class TransaksiController extends Controller
         ]);
 
         flash()->preset('terupdate');
+        return redirect()->back();
+    }
+
+    public function destroy(string $id)
+    {
+        Transaksi::find($id)->delete();
+
+        flash()->preset('terhapus');
         return redirect()->back();
     }
 

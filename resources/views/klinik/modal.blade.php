@@ -13,7 +13,7 @@
                         <label class="form-label">Nama Klinik</label>
                         <input type="text" class="form-control @error('nama_klinik') is-invalid @enderror"
                             name="nama_klinik" placeholder="Masukkan nama klinik">
-                        @error('nama')
+                        @error('nama_klinik')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
@@ -34,6 +34,16 @@
                         <textarea rows="4" class="form-control @error('alamat') is-invalid @enderror" name="alamat"
                             placeholder="Masukkan alamat"></textarea>
                         @error('alamat')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">No Rekening</label>
+                        <input type="number" class="form-control @error('nomor_rekening') is-invalid @enderror"
+                            name="nomor_rekening" placeholder="Masukkan no rekening klinik">
+                        @error('nomor_rekening')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>

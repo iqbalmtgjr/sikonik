@@ -78,5 +78,11 @@ return [
             'title' => 'Gagal!',
         ],
 
+        'selesai' => [
+            'type' => 'success',
+            'message' => 'Konsultasi Selesai',
+            'title' => 'Sukses!',
+        ],
+
     ],
 ];

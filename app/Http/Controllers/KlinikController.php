@@ -15,7 +15,11 @@ class KlinikController extends Controller
     public function index()
     {
         $klinik = Klinik::all();
-        return view('klinik.index', compact('klinik'));
+        if (auth()->user()->role == 'admin') {
+            return view('klinik.index', compact('klinik'));
+        } else {
+            return view('daftarklinik.indexklinik', compact('klinik'));
+        }
     }
 
     // public function index()
@@ -31,6 +35,7 @@ class KlinikController extends Controller
             'alamat' => 'required',
             'nomor_telepon' => 'required',
             'deskripsi' => 'required',
+            'nomor_rekening' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -46,6 +51,7 @@ class KlinikController extends Controller
             'alamat' => $request->alamat,
             'no_telp' => $request->nomor_telepon,
             'deskripsi' => $request->deskripsi,
+            'no_rek' => $request->nomor_rekening,
         ]);
 
         flash()->preset('tersimpan');
@@ -59,6 +65,7 @@ class KlinikController extends Controller
             'nama_klinik' => 'required',
             'alamat' => 'required',
             'nomor_telepon' => 'required',
+            'nomor_rekening' => 'required',
             'deskripsi' => 'required',
         ]);
 
@@ -75,6 +82,7 @@ class KlinikController extends Controller
             'nama_klinik' => $request->nama_klinik,
             'alamat' => $request->alamat,
             'no_telp' => $request->nomor_telepon,
+            'no_rek' => $request->nomor_rekening,
             'deskripsi' => $request->deskripsi,
         ]);
 

@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="pagetitle">
-        <h1>Transaksi</h1>
+        <h1>Transaksi {{ auth()->user()->adminklinik->klinik->nama_klinik }}</h1>
     </div>
 
     <section class="section">
@@ -40,6 +40,8 @@
                                                     </span>
                                                 </td>
                                                 <td>
+                                                    <a href="{{ url('bukti') . '/' . $item->bukti_bayar }}" target="_blank"
+                                                        class="btn btn-success btn-sm">Lihat Bukti</a>
                                                     <a href="#valid" onclick="getdata({{ $item->id }})"
                                                         data-bs-toggle="modal" class="btn btn-primary btn-sm">Validasi</a>
                                                     <a href="javascript:void(0)" class="btn btn-danger btn-sm delete"
@@ -77,7 +79,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `{{ url('/janjitemu/delete') }}/${Id}`,
+                        url: `{{ url('/transaksi/delete') }}/${Id}`,
                         method: 'GET',
                         data: {
                             _token: '{{ csrf_token() }}'

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nama_klinik');
             $table->string('alamat');
             $table->string('no_telp');
+            $table->string('no_rek')->nullable();
             $table->longText('deskripsi');
             $table->timestamps();
         });

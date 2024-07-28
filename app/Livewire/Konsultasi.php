@@ -2,72 +2,112 @@
 
 namespace App\Livewire;
 
+use App\Models\Dokter;
 use Livewire\Component;
-use App\Models\Konsultasi as KonsultasiModel;
 use Livewire\Attributes\On;
+use App\Models\Konsultasi as KonsultasiModel;
+use App\Models\Transaksi;
+use App\Models\User;
 
 class Konsultasi extends Component
 {
     public $chat;
+    public $dokter_id;
+    public $kode = null;
 
-    // public function mount()
-    // {
-    //     $this->klinik = Klinik::all();
-    //     if (auth()->user()->role != 'pelanggan') {
-    //         $this->konsultasi = KonsultasiModel::where('user_id', '!=', 1)->get();
-    //     } else {
-    //         $this->konsultasi = KonsultasiModel::all();
-    //     }
-    // }
+    public function mount($id)
+    {
+        $this->dokter_id = $id;
+        if (auth()->user()->role == 'pelanggan') {
+            $klinik = Transaksi::where('user_id', auth()->user()->id)->first();
+            $dokter = Dokter::find($this->dokter_id);
+            $chat_now = KonsultasiModel::where('dokter_id', $this->dokter_id)->first();
+            if ($klinik->klinik_id != $dokter->klinik_id) {
+                flash('Transaksi anda berada pada ' . $klinik->klinik->nama_klinik . '', 'warning');
+                return redirect('konsultasi/dokter');
+            } else if ($chat_now->status == 'Live' && $chat_now->user_id != auth()->user()->id) {
+                flash('Konsultasi sedang berlangsung. Mohon tunggu sebentar.', 'warning');
+                return redirect('konsultasi/dokter');
+            }
+        }
+    }
 
     #[On('chatAdded')]
     public function render()
     {
-        return view('livewire.konsultasi', [
-            'konsultasi' => KonsultasiModel::where('user_id', '!=', 1)->orderBy('id', 'asc')->get(),
-        ]);
+        if (auth()->user()->role == 'dokter') {
+            $nama_pelanggan = KonsultasiModel::where('dokter_id', $this->dokter_id)->first();
+            $konsultasis =  KonsultasiModel::where('dokter_id', auth()->user()->dokter->id)
+                ->orderBy('id', 'asc')
+                ->get();
+            $nama_klinik = Dokter::find(auth()->user()->dokter->id)->klinik->nama_klinik;
+            return view('livewire.konsultasi', [
+                'konsultasi' => $konsultasis,
+                'klinik' => $nama_klinik,
+                'pelanggan' => $nama_pelanggan,
+            ]);
+        } else {
+            //  pelanggan  //
+            $konsultasis = KonsultasiModel::where('dokter_id', $this->dokter_id)
+                ->whereIn('user_id', [auth()->user()->id, Dokter::find($this->dokter_id)->user->id])
+                ->orderBy('id', 'asc')
+                ->get();
+
+            if (count($konsultasis) <= 1) {
+                $konsultasi = KonsultasiModel::where('dokter_id', $this->dokter_id)
+                    ->whereIn('user_id', [auth()->user()->id])
+                    ->orderBy('id', 'asc')
+                    ->get();
+            } else {
+                $konsultasi = $konsultasis;
+            }
+
+
+            return view('livewire.konsultasi', [
+                'konsultasi' => $konsultasi,
+                'klinik' => Transaksi::where('user_id', auth()->user()->id)->first()->klinik->nama_klinik,
+                'dokter' => Dokter::find($this->dokter_id)->user->name,
+            ]);
+        }
     }
 
     public function kirim()
     {
+        if (isset(auth()->user()->transaksi) && auth()->user()->transaksi->status == 'Menunggu') {
+            flash('Silahkan melakukan pembayaran terlebih dahulu', 'error');
+            return redirect('/konsultasi');
+        } elseif (isset(auth()->user()->transaksi) && auth()->user()->transaksi->status == 'Tidak Valid') {
+            flash('Pembayaran anda tidak valid', 'error');
+            return redirect('/konsultasi');
+        }
+
         if (empty($this->chat)) {
             flash('Pesan tidak boleh kosong', 'error');
         } else {
-
-
             $kode = rand(100000, 999999);
-            $lastKonsultasi = KonsultasiModel::where('status', 'Menunggu')->latest()->first();
-            if ($lastKonsultasi) {
-                $lastKonsultasi2 = KonsultasiModel::where('kode', $lastKonsultasi->kode)->latest()->first();
-            }
+            // if (auth()->user()->role != 'dokter') {
+            // $lastKonsultasi = KonsultasiModel::where('user_id', auth()->user()->id)->latest()->first();
+            // } else {
+            $lastKonsultasi = KonsultasiModel::where('dokter_id', $this->dokter_id)->latest()->first();
+            // }
+            // if ($lastKonsultasi) {
+            //     $lastKonsultasi2 = KonsultasiModel::where('kode', $lastKonsultasi->kode)->latest()->first();
+            // }
             // dd($lastKonsultasi);
             if (!$lastKonsultasi) {
-                $ahai = KonsultasiModel::create([
-                    'user_id' => auth()->user()->id,
-                    'kode' => $kode,
-                    'chat' => $this->chat,
-                    'status' => 'Menunggu',
-                ]);
-
-                // KonsultasiModel::create([
-                //     'user_id' => 1,
-                //     'kode' => $ahai->kode,
-                //     'chat' => 'Silahkan melakukan pembayaran terlebih dahulu',
-                //     'status' => 'Menunggu',
-                // ]);
-            } elseif ($lastKonsultasi->user_id != auth()->user()->id) {
-                $kode = $lastKonsultasi->kode;
                 KonsultasiModel::create([
                     'user_id' => auth()->user()->id,
+                    'dokter_id' => $this->dokter_id,
                     'kode' => $kode,
                     'chat' => $this->chat,
                     'status' => 'Live',
                 ]);
-            } elseif ($lastKonsultasi->user_id == auth()->user()->id && $lastKonsultasi2->status == 'Live') {
+            } else {
                 $kode = $lastKonsultasi->kode;
                 KonsultasiModel::create([
                     'user_id' => auth()->user()->id,
-                    'kode' => $kode,
+                    'dokter_id' => $this->dokter_id,
+                    'kode' => $lastKonsultasi->kode,
                     'chat' => $this->chat,
                     'status' => 'Live',
                 ]);
@@ -77,5 +117,29 @@ class Konsultasi extends Component
 
             $this->dispatch('chatAdded');
         }
+    }
+
+    public function selesai($kode)
+    {
+        $konsul = KonsultasiModel::where('kode', $kode)->first();
+        $hapus_trans = Transaksi::where('user_id', $konsul->user_id)->first();
+        if ($hapus_trans->bukti_bayar) {
+            $path = public_path('bukti/' . $hapus_trans->bukti_bayar);
+            if (file_exists($path)) {
+                @unlink($path);
+            }
+        }
+        $hapus_trans->delete();
+        KonsultasiModel::whereIn('kode', [$kode])->delete();
+
+        if (auth()->user()->role == 'dokter') {
+            flash()->preset('selesai');
+            return redirect('/konsultasi' . '/' . auth()->user()->dokter->id);
+        } else {
+            flash()->preset('selesai');
+            return redirect('/konsultasi/dokter');
+        }
+
+        $this->dispatch('chatAdded');
     }
 }

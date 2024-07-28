@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Transaksi;
 use App\Livewire\Konsultasi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -8,6 +9,7 @@ use App\Http\Controllers\KlinikController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\JanjitemuController;
 use App\Http\Controllers\TransaksiController;
+use App\Livewire\Dokter;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -45,12 +47,13 @@ Route::middleware('auth')->group(function () {
 
     //transaksi
     Route::get('/transaksi', [TransaksiController::class, 'index'])->name('transaksi');
-    Route::get('/transaksi/tagihan', [TransaksiController::class, 'tagihan'])->name('tagihan');
+    Route::get('/transaksi/tagihan/{id}', [TransaksiController::class, 'tagihan'])->name('tagihan');
     Route::post('/transaksi', [TransaksiController::class, 'store'])->name('transaksi.store');
     Route::put('/transaksi', [TransaksiController::class, 'update'])->name('transaksi.update');
     Route::get('/transaksi/delete/{id}', [TransaksiController::class, 'destroy'])->name('transaksi.destroy');
     Route::get('/transaksi/getdata/{id}', [TransaksiController::class, 'getdata'])->name('getdatatransaksi');
 
     //konsultasi
-    Route::get('/konsultasi', Konsultasi::class);
+    Route::get('/konsultasi/dokter', Dokter::class);
+    Route::get('/konsultasi/{id}', Konsultasi::class);
 });
