@@ -84,7 +84,7 @@ class JanjitemuController extends Controller
             ]);
         } else {
             $janji->update([
-                'user_id' => auth()->user()->id,
+                // 'user_id' => auth()->user()->id,
                 'klinik_id' => $request->nama_klinik,
                 'jenis_hewan' => $request->jenis_hewan,
                 'keluhan_hewan' => $request->keluhan_hewan,
