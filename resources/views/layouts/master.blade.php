@@ -105,18 +105,29 @@
                     <span>Dashboard</span>
                 </a>
             </li>
+            @if (Auth::user()->role == 'admin' || Auth()->user()->role == 'pelanggan')
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('klinik') ? '' : 'collapsed' }}" href="{{ url('klinik') }}">
                     <i class="bi bi-table"></i>
                     <span>Data Klinik & Dokter</span>
                 </a>
             </li>
-            @if (Auth::user()->role == 'admin' || Auth()->user()->role == 'admin_klinik')
+            @endif
+            @if (Auth::user()->role == 'admin' )
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('pengguna') ? '' : 'collapsed' }}"
+                    href="{{ url('pengguna') }}">
+                    <i class="bi bi-person-fill"></i>
+                    <span>Kelola Pengguna</span>
+                </a>
+            </li>
+            @endif
+            @if (Auth::user()->role == 'admin_klinik')
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('pengguna') ? '' : 'collapsed' }}"
                         href="{{ url('pengguna') }}">
                         <i class="bi bi-person-fill"></i>
-                        <span>Kelola Pengguna</span>
+                        <span>Kelola Dokter</span>
                     </a>
                 </li>
             @endif
@@ -147,11 +158,11 @@
                     @endif
                 </li>
             @endif
-            @if (Auth::user()->role != 'dokter')
+            @if (Auth::user()->role == 'dokter' || Auth()->user()->role == 'admin_klinik' || Auth()->user()->role == 'pelanggan' )
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('janjitemu') ? '' : 'collapsed' }}"
                         href="{{ url('janjitemu') }}">
-                        <i class="bi bi-plus-square"></i>
+                        <i class="bi bi-calendar-plus-fill"></i>
                         <span>Buat Janji Temu</span>
                     </a>
                 </li>

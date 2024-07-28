@@ -46,10 +46,11 @@
                                                         <a href="#edit" onclick="getdata({{ $klinik->id }})"
                                                             data-bs-toggle="modal" data-id="{{ $klinik->id }}"
                                                             class="btn btn-primary btn-sm">Edit</a>
+                                                        <a href="javascript:void(0)" class="btn btn-danger btn-sm delete"
+                                                            data-nama="{{ $klinik->nama_klinik }}"
+                                                            data-id="{{ $klinik->id }}">Hapus</a>
                                                     @endif
-                                                    <a href="javascript:void(0)" class="btn btn-danger btn-sm delete"
-                                                        data-nama="{{ $klinik->nama_klinik }}"
-                                                        data-id="{{ $klinik->id }}">Hapus</a>
+                                                    
                                                 </td>
                                             </tr>
                                         @endforeach
