@@ -14,11 +14,19 @@ class Konsultasi extends Component
     public $chat;
     public $dokter_id;
     public $kode = null;
+    public $trans;
 
+    #[On('chatAdded')]
     public function mount($id)
     {
         $this->dokter_id = $id;
+        $this->trans = Transaksi::where('user_id', auth()->user()->id)->first();
+
         if (auth()->user()->role == 'pelanggan') {
+            if (!$this->trans) {
+                flash('Konsultasi berakhir.', 'success');
+                return redirect('konsultasi/dokter');
+            }
             $klinik = Transaksi::where('user_id', auth()->user()->id)->first();
             $dokter = Dokter::find($this->dokter_id);
             $chat_now = KonsultasiModel::where('dokter_id', $this->dokter_id)->first();
@@ -33,7 +41,6 @@ class Konsultasi extends Component
         }
     }
 
-    #[On('chatAdded')]
     public function render()
     {
         if (auth()->user()->role == 'dokter') {
@@ -63,10 +70,11 @@ class Konsultasi extends Component
                 $konsultasi = $konsultasis;
             }
 
+            // $transs = $this->trans->klinik->nama_klinik;
 
             return view('livewire.konsultasi', [
                 'konsultasi' => $konsultasi,
-                'klinik' => Transaksi::where('user_id', auth()->user()->id)->first()->klinik->nama_klinik,
+                'klinik' => $this->trans->klinik->nama_klinik,
                 'dokter' => Dokter::find($this->dokter_id)->user->name,
             ]);
         }
@@ -115,8 +123,6 @@ class Konsultasi extends Component
             }
 
             $this->chat = null;
-
-            $this->dispatch('chatAdded');
         }
     }
 
@@ -133,14 +139,9 @@ class Konsultasi extends Component
         $hapus_trans->delete();
         KonsultasiModel::whereIn('kode', [$kode])->delete();
 
-        if (auth()->user()->role == 'dokter') {
-            flash()->preset('selesai');
-            return redirect('/konsultasi' . '/' . auth()->user()->dokter->id);
-        } else {
-            flash()->preset('selesai');
-            return redirect('/konsultasi/dokter');
-        }
+        flash()->preset('selesai');
+        return redirect('/home');
 
-        $this->dispatch('chatAdded');
+        $this->dispatch('chatAdded', $this->dokter_id);
     }
 }

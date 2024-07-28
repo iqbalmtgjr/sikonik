@@ -55,7 +55,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <form wire:submit.prevent="kirim">
+                            <form wire:submit="kirim">
                                 <div class="row card-footer">
                                     <div class="col-11">
                                         <input type="text" class="form-control chat-input"
