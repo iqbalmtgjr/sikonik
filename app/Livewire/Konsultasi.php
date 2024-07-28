@@ -25,7 +25,8 @@ class Konsultasi extends Component
             if ($klinik->klinik_id != $dokter->klinik_id) {
                 flash('Transaksi anda berada pada ' . $klinik->klinik->nama_klinik . '', 'warning');
                 return redirect('konsultasi/dokter');
-            } else if ($chat_now->status == 'Live' && $chat_now->user_id != auth()->user()->id) {
+            }
+            if (isset($chat_now->status) && $chat_now->status == 'Live' && $chat_now->user_id != auth()->user()->id) {
                 flash('Konsultasi sedang berlangsung. Mohon tunggu sebentar.', 'warning');
                 return redirect('konsultasi/dokter');
             }
