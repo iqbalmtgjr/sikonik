@@ -16,17 +16,19 @@ class Konsultasi extends Component
     public $kode = null;
     public $trans;
 
-    #[On('chatAdded')]
+    // #[On('chatAdded')]
     public function mount($id)
     {
         $this->dokter_id = $id;
+
+        // dd('ahai_mount');
         $this->trans = Transaksi::where('user_id', auth()->user()->id)->first();
 
         if (auth()->user()->role == 'pelanggan') {
-            if (!$this->trans) {
-                flash('Konsultasi berakhir.', 'success');
-                return redirect('konsultasi/dokter');
-            }
+            // if (!$this->trans) {
+            //     flash('Konsultasi berakhir.', 'success');
+            //     return redirect('/home');
+            // }
             $klinik = Transaksi::where('user_id', auth()->user()->id)->first();
             $dokter = Dokter::find($this->dokter_id);
             $chat_now = KonsultasiModel::where('dokter_id', $this->dokter_id)->first();
@@ -55,6 +57,8 @@ class Konsultasi extends Component
                 'pelanggan' => $nama_pelanggan,
             ]);
         } else {
+            // dd('ahai_render_pelanggan');
+
             //  pelanggan  //
             $konsultasis = KonsultasiModel::where('dokter_id', $this->dokter_id)
                 ->whereIn('user_id', [auth()->user()->id, Dokter::find($this->dokter_id)->user->id])
@@ -126,22 +130,45 @@ class Konsultasi extends Component
         }
     }
 
+    // public function selesai($kode)
+    // {
+    //     $konsul = KonsultasiModel::where('kode', $kode)->first();
+    //     $hapus_trans = Transaksi::where('user_id', $konsul->user_id)->first();
+    //     if ($hapus_trans->bukti_bayar) {
+    //         $path = public_path('bukti/' . $hapus_trans->bukti_bayar);
+    //         if (file_exists($path)) {
+    //             @unlink($path);
+    //         }
+    //     }
+    //     $hapus_trans->delete();
+    //     KonsultasiModel::whereIn('kode', [$kode])->delete();
+
+    //     flash()->preset('selesai');
+    //     return redirect('/home');
+
+    //     $this->dispatch('chatAdded', $this->dokter_id);
+    // }
+
     public function selesai($kode)
     {
         $konsul = KonsultasiModel::where('kode', $kode)->first();
-        $hapus_trans = Transaksi::where('user_id', $konsul->user_id)->first();
-        if ($hapus_trans->bukti_bayar) {
-            $path = public_path('bukti/' . $hapus_trans->bukti_bayar);
-            if (file_exists($path)) {
-                @unlink($path);
+        if ($konsul) {
+            $hapus_trans = Transaksi::where('user_id', $konsul->user_id)->first();
+            if ($hapus_trans) {
+                if ($hapus_trans->bukti_bayar) {
+                    $path = public_path('bukti/' . $hapus_trans->bukti_bayar);
+                    if (file_exists($path)) {
+                        @unlink($path);
+                    }
+                }
+                $hapus_trans->delete();
             }
+
+            KonsultasiModel::whereIn('kode', [$kode])->delete();
+
+            // flash()->preset('selesai');
+            // $this->dispatch('chatAdded', $this->dokter_id);
+            // $this->redirectIntended('/home');
         }
-        $hapus_trans->delete();
-        KonsultasiModel::whereIn('kode', [$kode])->delete();
-
-        flash()->preset('selesai');
-        return redirect('/home');
-
-        $this->dispatch('chatAdded', $this->dokter_id);
     }
 }

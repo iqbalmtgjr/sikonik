@@ -16,6 +16,7 @@
     <section class="section">
         <div class="row">
             @if (auth()->user()->role == 'pelanggan')
+                {{-- @if (isset($konsultasi[0]) && $konsultasi[0]->user_id == auth()->user()->id) --}}
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body d-flex flex-column">
@@ -71,6 +72,13 @@
                         </div>
                     </div>
                 </div>
+                {{-- @else
+                    <div class="col-12">
+                        <div class="alert alert-danger" role="alert">
+                            Tidak ada chat
+                        </div>
+                    </div>
+                @endif --}}
             @else
                 @if (isset($konsultasi[0]) && $konsultasi[0]->dokter_id == auth()->user()->dokter->id)
                     <div class="col-12">
@@ -124,12 +132,12 @@
                                                     class="bi bi-send"></i></button>
                                             @php
                                                 if (isset($konsultasi) && $konsultasi[0]) {
-                                                    $konsultasis = $konsultasi[0]->kode;
+                                                    $konsultan = $konsultasi[0]->kode;
                                                 }
                                             @endphp
                                             @if (auth()->user()->role == 'dokter')
                                                 <button type="button" class="btn btn-success ms-auto"
-                                                    wire:click="selesai({{ $konsultasis }})"><i
+                                                    wire:click="selesai({{ $konsultan }})"><i
                                                         class="bi bi-check"></i></button>
                                             @endif
                                         </div>
@@ -186,9 +194,11 @@
                 scrollToBottom();
             });
 
-            document.addEventListener("livewire:load", function() {
-                Livewire.hook('chatAdded', (message, component) => {
-                    scrollToBottom();
+            document.addEventListener("livewire:init", function() {
+                Livewire.hook('message.processed', (message, component) => {
+                    if (message.response?.redirect) {
+                        window.location.href = message.response.redirect;
+                    }
                 });
             });
 
