@@ -1,84 +1,98 @@
 <div>
-    <div class="container">
-        <div class="row text-center">
-            <div class="col">
-                <h2 class="text-primary fw-bold">Konsultasi di {{ $klinik }}</h2>
-                @if (auth()->user()->role == 'pelanggan')
-                    <p class="text-muted">Dokter: <span class="fw-bold">{{ $dokter }}</span></p>
-                @else
-                    <p class="text-muted">Pelanggan: <span
-                            class="fw-bold">{{ isset($pelanggan) ? $pelanggan->user->name : '' }}</span></p>
-                @endif
+    @if (isset($trans) && $trans->status == 'Valid')
+        <div class="container">
+            <div class="row text-center">
+                <div class="col">
+                    <h2 class="text-primary fw-bold">Konsultasi di {{ $klinik }}</h2>
+                    @if (auth()->user()->role == 'pelanggan')
+                        <p class="text-muted">Dokter: <span class="fw-bold">{{ $dokter }}</span></p>
+                    @else
+                        <p class="text-muted">Pelanggan: <span
+                                class="fw-bold">{{ isset($pelanggan) ? $pelanggan->user->name : '' }}</span></p>
+                    @endif
+                </div>
             </div>
         </div>
-    </div>
+    @endif
 
     <section class="section">
         <div class="row">
             @if (auth()->user()->role == 'pelanggan')
-                {{-- @if (isset($konsultasi[0]) && $konsultasi[0]->user_id == auth()->user()->id) --}}
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body d-flex flex-column">
-                            <div class="row flex-grow-1">
-                                <div class="col-12 chat-scrollable" style="height: calc(80vh - 100px)">
-                                    <div wire:poll>
-                                        @foreach ($konsultasi as $item)
-                                            @php
-                                                $now = new DateTime();
-                                                $ago = new DateTime($item->created_at);
-                                                $diff = $now->diff($ago);
-                                                $formattedTime = $ago->format('H:i');
-                                            @endphp
-                                            @if ($item->user_id == auth()->user()->id)
-                                                <div class="d-flex justify-content-end">
-                                                    <div class="chat-bubble chat-bubble-sender">
-                                                        {{ $item->chat }} <br>
-                                                        <div class="text-end">
-                                                            <span class="text-small text-muted"
-                                                                style="font-size: 11px;">
+                @if (isset($konsultasi[0]) && $konsultasi[0]->user_id == auth()->user()->id)
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body d-flex flex-column">
+                                <div class="row flex-grow-1">
+                                    <div class="col-12 chat-scrollable" style="height: calc(80vh - 100px)">
+                                        <div wire:poll>
+                                            @foreach ($konsultasi as $item)
+                                                @php
+                                                    $now = new DateTime();
+                                                    $ago = new DateTime($item->created_at);
+                                                    $diff = $now->diff($ago);
+                                                    $formattedTime = $ago->format('H:i');
+                                                @endphp
+                                                @if ($item->user_id == auth()->user()->id)
+                                                    <div class="d-flex justify-content-end">
+                                                        <div class="chat-bubble chat-bubble-sender">
+                                                            {{ $item->chat }} <br>
+                                                            <div class="text-end">
+                                                                <span class="text-small text-muted"
+                                                                    style="font-size: 11px;">
+                                                                    {{ $formattedTime }}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <div class="d-flex justify-content-start">
+                                                        <div class="chat-bubble chat-bubble-receiver">
+                                                            {{ $item->chat }} <br>
+                                                            <span class="text-small text-muted" style="font-size: 11px">
                                                                 {{ $formattedTime }}
                                                             </span>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            @else
-                                                <div class="d-flex justify-content-start">
-                                                    <div class="chat-bubble chat-bubble-receiver">
-                                                        {{ $item->chat }} <br>
-                                                        <span class="text-small text-muted" style="font-size: 11px">
-                                                            {{ $formattedTime }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            @endif
-                                        @endforeach
+                                                @endif
+                                            @endforeach
+                                        </div>
                                     </div>
                                 </div>
+                                <form wire:submit="kirim">
+                                    <div class="row card-footer">
+                                        <div class="col-11">
+                                            <input type="text" class="form-control chat-input"
+                                                placeholder="Tulis pesan disini..." wire:model.debounce.500ms="chat"
+                                                onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.form.dispatchEvent(new Event('submit', { 'bubbles': true })); }">
+                                        </div>
+                                        <div class="col-1 d-flex align-items-center">
+                                            <button type="submit" class="btn btn-primary ms-auto mr-2"><i
+                                                    class="bi bi-send"></i></button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                            <form wire:submit="kirim">
-                                <div class="row card-footer">
-                                    <div class="col-11">
-                                        <input type="text" class="form-control chat-input"
-                                            placeholder="Tulis pesan disini..." wire:model.debounce.500ms="chat"
-                                            onkeydown="if (event.key === 'Enter') { event.preventDefault(); this.form.dispatchEvent(new Event('submit', { 'bubbles': true })); }">
-                                    </div>
-                                    <div class="col-1 d-flex align-items-center">
-                                        <button type="submit" class="btn btn-primary ms-auto mr-2"><i
-                                                class="bi bi-send"></i></button>
-                                    </div>
-                                </div>
-                            </form>
                         </div>
                     </div>
-                </div>
-                {{-- @else
+                @else
                     <div class="col-12">
-                        <div class="alert alert-danger" role="alert">
-                            Tidak ada chat
-                        </div>
+                        {{-- <div class="alert alert-danger text-center" role="alert">
+                            Belum ada chat
+                        </div> --}}
+                        @if (isset($trans) && $trans->status == 'Valid')
+                            <div class="col-12 mt-2 text-center">
+                                <button class="btn btn-primary btn-block" wire:click="chatNow">Chat Sekarang</button>
+                            </div>
+                        @else
+                            <div class="alert alert-danger text-center" role="alert">
+                                Anda belum menyelesaikan pembayaran
+                            </div>
+                            <div class="col-12 mt-2 text-center">
+                                <a href="{{ url('konsultasi/dokter') }}" class="btn btn-secondary btn-block">Kembali</a>
+                            </div>
+                        @endif
                     </div>
-                @endif --}}
+                @endif
             @else
                 @if (isset($konsultasi[0]) && $konsultasi[0]->dokter_id == auth()->user()->dokter->id)
                     <div class="col-12">

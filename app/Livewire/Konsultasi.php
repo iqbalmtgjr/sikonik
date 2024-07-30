@@ -32,7 +32,7 @@ class Konsultasi extends Component
             $klinik = Transaksi::where('user_id', auth()->user()->id)->first();
             $dokter = Dokter::find($this->dokter_id);
             $chat_now = KonsultasiModel::where('dokter_id', $this->dokter_id)->first();
-            if ($klinik->klinik_id != $dokter->klinik_id) {
+            if (isset($klinik) && $klinik->klinik_id != $dokter->klinik_id) {
                 flash('Transaksi anda berada pada ' . $klinik->klinik->nama_klinik . '', 'warning');
                 return redirect('konsultasi/dokter');
             }
@@ -75,10 +75,15 @@ class Konsultasi extends Component
             }
 
             // $transs = $this->trans->klinik->nama_klinik;
+            if (isset($this->trans)) {
+                $tranb = $this->trans->klinik->nama_klinik;
+            } else {
+                $tranb = null;
+            }
 
             return view('livewire.konsultasi', [
                 'konsultasi' => $konsultasi,
-                'klinik' => $this->trans->klinik->nama_klinik,
+                'klinik' => $tranb,
                 'dokter' => Dokter::find($this->dokter_id)->user->name,
             ]);
         }
@@ -170,5 +175,17 @@ class Konsultasi extends Component
             // $this->dispatch('chatAdded', $this->dokter_id);
             // $this->redirectIntended('/home');
         }
+    }
+
+    public function chatNow()
+    {
+        $kode = rand(100000, 999999);
+        KonsultasiModel::create([
+            'user_id' => auth()->user()->id,
+            'dokter_id' => $this->dokter_id,
+            'kode' => $kode,
+            'chat' => "Halo dokter",
+            'status' => 'Live',
+        ]);
     }
 }
