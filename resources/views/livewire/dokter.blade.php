@@ -11,12 +11,13 @@
                         </h6>
                         <div class="list-group p-5">
                             @foreach ($dokter as $item)
-                                <a href="javascript:void(0)" class="list-group-item list-group-item-action"
+                                <button {{ $item->user->is_online ? '' : 'disabled' }} type="button"
+                                    class="list-group-item list-group-item-action"
                                     wire:click="selectDokter({{ $item->klinik_id }},{{ $item->id }})">
                                     {{ $item->user->name }} - {{ $item->klinik->nama_klinik }}
                                     <span
                                         class="badge {{ $item->user->is_online ? 'bg-success' : 'bg-danger' }} float-end">{{ $item->user->is_online ? 'online' : 'offline' }}</span>
-                                </a>
+                                </button>
                             @endforeach
                         </div>
                     </div>

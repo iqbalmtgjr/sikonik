@@ -234,10 +234,6 @@
                         window.location.href = message.response.redirect;
                     }
                 });
-
-                if (!$trans) {
-                    window.location.href = '/home';
-                }
             });
 
             function scrollToBottom() {

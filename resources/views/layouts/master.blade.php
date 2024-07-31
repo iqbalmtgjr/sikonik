@@ -133,11 +133,24 @@
             @endif
             @if (Auth::user()->role == 'dokter' || Auth()->user()->role == 'pelanggan')
                 @if (Auth::user()->role == 'dokter')
-                    <li class="nav-item">
+                    @php
+                        $notif = \App\Models\Konsultasi::where('dokter_id', Auth::user()->dokter->id)
+                            ->where('status', 'Live')
+                            ->count();
+                    @endphp
+                    {{-- <li class="nav-item">
                         <a class="nav-link {{ request()->is('konsultasi*') ? '' : 'collapsed' }}"
                             href="{{ url('konsultasi') . '/' . Auth::user()->dokter->id }}">
                             <i class="bi bi-chat-square-text"></i>
                             <span>Konsultasi</span>
+                        </a>
+                    </li> --}}
+                    <li class="nav-item">
+                        <a href="{{ url('konsultasi') . '/' . Auth::user()->dokter->id }}"
+                            class="nav-link {{ request()->is('konsultasi*') ? '' : 'collapsed' }}">
+                            <i class="bi bi-chat-square-text"></i>
+                            <span>Konsultasi <span
+                                    class="badge text-bg-danger float-right">{{ $notif > 0 ? $notif : '' }}</span></span>
                         </a>
                     </li>
                 @else
