@@ -7,28 +7,29 @@ use Livewire\Component;
 use Livewire\Attributes\On;
 use App\Models\Konsultasi as KonsultasiModel;
 use App\Models\Transaksi;
-use App\Models\User;
+use Livewire\Attributes\Validate;
 
 class Konsultasi extends Component
 {
-    public $chat;
+    #[Validate('required', message: 'Pesan tidak boleh kosong')]
+    public $chat = '';
+
     public $dokter_id;
     public $kode = null;
-    public $trans;
 
-    // #[On('chatAdded')]
+    #[On('chatAdded')]
     public function mount($id)
     {
         $this->dokter_id = $id;
 
-        // dd('ahai_mount');
-        $this->trans = Transaksi::where('user_id', auth()->user()->id)->first();
+        $trans = Transaksi::where('user_id', auth()->user()->id)->first();
+        // dd($trans);
 
         if (auth()->user()->role == 'pelanggan') {
-            // if (!$this->trans) {
-            //     flash('Konsultasi berakhir.', 'success');
-            //     return redirect('/home');
-            // }
+            if (!$trans) {
+                flash('Konsultasi berakhir.', 'success');
+                return redirect('/home');
+            }
             $klinik = Transaksi::where('user_id', auth()->user()->id)->first();
             $dokter = Dokter::find($this->dokter_id);
             $chat_now = KonsultasiModel::where('dokter_id', $this->dokter_id)->first();
@@ -45,6 +46,7 @@ class Konsultasi extends Component
 
     public function render()
     {
+        $trans = Transaksi::where('user_id', auth()->user()->id)->first();
         if (auth()->user()->role == 'dokter') {
             $nama_pelanggan = KonsultasiModel::where('dokter_id', $this->dokter_id)->first();
             $konsultasis =  KonsultasiModel::where('dokter_id', auth()->user()->dokter->id)
@@ -75,8 +77,8 @@ class Konsultasi extends Component
             }
 
             // $transs = $this->trans->klinik->nama_klinik;
-            if (isset($this->trans)) {
-                $tranb = $this->trans->klinik->nama_klinik;
+            if (isset($trans)) {
+                $tranb = Transaksi::where('user_id', auth()->user()->id)->first()->klinik->nama_klinik;
             } else {
                 $tranb = null;
             }
@@ -84,6 +86,7 @@ class Konsultasi extends Component
             return view('livewire.konsultasi', [
                 'konsultasi' => $konsultasi,
                 'klinik' => $tranb,
+                'trans' => $trans,
                 'dokter' => Dokter::find($this->dokter_id)->user->name,
             ]);
         }
@@ -91,6 +94,8 @@ class Konsultasi extends Component
 
     public function kirim()
     {
+        $this->validate();
+
         if (isset(auth()->user()->transaksi) && auth()->user()->transaksi->status == 'Menunggu') {
             flash('Silahkan melakukan pembayaran terlebih dahulu', 'error');
             return redirect('/konsultasi');
@@ -172,7 +177,7 @@ class Konsultasi extends Component
             KonsultasiModel::whereIn('kode', [$kode])->delete();
 
             // flash()->preset('selesai');
-            // $this->dispatch('chatAdded', $this->dokter_id);
+            $this->dispatch('chatAdded', $this->dokter_id);
             // $this->redirectIntended('/home');
         }
     }
