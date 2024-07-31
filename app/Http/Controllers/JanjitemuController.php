@@ -13,12 +13,12 @@ class JanjitemuController extends Controller
     {
         if (auth()->user()->role == 'admin') {
             $janji = Janjitemu::all();
-        } elseif (auth()->user()->role == 'pelanggan') {
+        } else if (auth()->user()->role == 'pelanggan') {
             $janji = Janjitemu::where('user_id', auth()->user()->id)->get();
         } else {
             $janji = Janjitemu::where('klinik_id', auth()->user()->adminklinik->klinik_id)->get();
         }
-        $klinik = Klinik::all();
+        // $klinik = Klinik::all();
         ///  dd($janji);
         return view('janjitemu.index', compact('janji', 'klinik'));
     }

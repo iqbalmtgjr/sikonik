@@ -138,14 +138,7 @@
                             ->where('status', 'Live')
                             ->count();
                     @endphp
-                    {{-- <li class="nav-item">
-                        <a class="nav-link {{ request()->is('konsultasi*') ? '' : 'collapsed' }}"
-                            href="{{ url('konsultasi') . '/' . Auth::user()->dokter->id }}">
-                            <i class="bi bi-chat-square-text"></i>
-                            <span>Konsultasi</span>
-                        </a>
-                    </li> --}}
-                    <li class="nav-item">
+                    <li class="nav-item refresh">
                         <a href="{{ url('konsultasi') . '/' . Auth::user()->dokter->id }}"
                             class="nav-link {{ request()->is('konsultasi*') ? '' : 'collapsed' }}">
                             <i class="bi bi-chat-square-text"></i>
@@ -176,7 +169,7 @@
                     @endif
                 @endif
             @endif
-            @if (Auth::user()->role == 'dokter' || Auth()->user()->role == 'admin_klinik' || Auth()->user()->role == 'pelanggan')
+            @if (Auth()->user()->role == 'admin_klinik' || Auth()->user()->role == 'pelanggan')
                 <li class="nav-item">
                     <a class="nav-link {{ request()->is('janjitemu') ? '' : 'collapsed' }}"
                         href="{{ url('janjitemu') }}">
@@ -253,8 +246,20 @@
                     "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json"
                 }
             });
+
+            setInterval(function() {
+                $('.refresh').load("/ .refresh");
+            }, 3000);
         });
     </script>
+
+    {{-- <script>
+        $(document).ready(function() {
+            setInterval(function() {
+                $('#result').load("/ #result");
+            }, 3000);
+        });
+    </script> --}}
 
     @livewireScripts
     @stack('script')
