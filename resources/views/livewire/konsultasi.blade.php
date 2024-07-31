@@ -182,6 +182,9 @@
                         <div class="alert alert-danger" role="alert">
                             Tidak ada chat yang masuk
                         </div>
+                        <div class="col-12 mt-2 text-center">
+                            <a href="{{ url('/home') }}" class="btn btn-secondary btn-block">Kembali</a>
+                        </div>
                     </div>
                 @endif
             @endif
