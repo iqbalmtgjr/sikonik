@@ -117,7 +117,8 @@ class PenggunaController extends Controller
                 ->withInput();
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::find($request->id);
+        // dd($user);
         $user->update([
             'name' => $request->nama,
             'email' => $request->email,

@@ -10,6 +10,7 @@
                 <form action="{{ route('pengguna.update') }}" method="POST">
                     @csrf
                     @method('PUT')
+                    <input type="hidden" name="id" id="id">
                     <div class="mb-3">
                         <label for="nama" class="form-label">Nama</label>
                         <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama"
@@ -69,6 +70,7 @@
                 method: 'GET',
                 success: function(data) {
                     // console.log(data);
+                    $('#id').val(data.id);
                     $('#nama').val(data.name);
                     $('#email').val(data.email);
                     if (data.pelanggan) {
